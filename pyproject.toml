@@ -10,6 +10,7 @@ dependencies = [
     "gymnasium>=1.0.0",
     "matplotlib>=3.10.0",
     "pygame>=2.6.1",
+    "torch>=2.5.1",
 ]
 
 [project.scripts]
