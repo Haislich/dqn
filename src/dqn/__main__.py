@@ -1,23 +1,44 @@
 import gymnasium as gym
-
-# from gymnasium import
 import ale_py
+import pygame
+import numpy as np
+
+WIDTH = 800
+HEIGHT = 800
 
 gym.register_envs(ale_py)
 
 
 def main():
-    env = gym.make("ALE/Asteroids-v5", render_mode="human")
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    environment = gym.make("ALE/Atlantis-v5", render_mode="rgb_array")
+    observation, info = environment.reset()
 
-    observation, info = env.reset()
     done = False
+    clock = pygame.time.Clock()
+
     while not done:
 
-        observation, reward, terminated, truncated, info = env.step(
-            env.action_space.sample()
-        )
+        action = environment.action_space.sample()
+        observation, reward, terminated, truncated, info = environment.step(action)
         done = terminated or truncated
-    env.close()
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                done = True
+
+        # Scale up the image to your desired dimensions
+        frame = np.array(observation)
+        frame = pygame.surfarray.make_surface(np.swapaxes(frame, 0, 1))
+        frame = pygame.transform.scale(frame, (WIDTH, HEIGHT))
+        screen.blit(frame, (0, 0))
+
+        pygame.display.flip()
+        clock.tick(22)
+
+    environment.close()
+    pygame.quit()  # type : ignore
 
 
 if __name__ == "__main__":
